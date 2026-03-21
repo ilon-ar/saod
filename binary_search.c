@@ -19,7 +19,6 @@ int main() {
         for (int v = 1; v <= 2; v++) {
             for (int i = -1; i < 2; i++) {
                 int x;
-                // sleep(1);
                 
                 switch (i) {
                     case -1:
@@ -111,7 +110,7 @@ void Fillinc(int *A, int n) {
 
 void draw_table(int *data, int n) {
     printf("-----------------------------------------\n");
-    printf("| N\t|Cф (I версия)\t|Cф (II версия)\t|\n");
+    printf("| N\t|Cф (II версия)\t|Cф (I версия)\t|\n");
     printf("-----------------------------------------\n");
     int i = 0;
     for (int s = 1; s <= 10; s++) {
