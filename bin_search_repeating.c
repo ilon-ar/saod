@@ -8,34 +8,30 @@ void PrintMas(int *A, int n);
 void draw_table(int *data, int n);
 int bin_search_v1(int *A, int n, int x, int *C);
 int bin_search_v2(int *A, int n, int x, int *C);
-void search_testing(int n, int version);
+void search_testing(int n, int version, int x);
 
 int test_num =  1;
 int table_data[20];
 
 int main() {
     srand(time(NULL));
-    for (int n = 100; n < 1001; n += 100) {
-        for (int v = 1; v <= 2; v++) {
-            search_testing(n, v);
-        }
-    }
-    draw_table(table_data, 20);
+    search_testing(100, 1, 3);
+    search_testing(100, 2, 3);
     return 0;   
 }
 
-void search_testing(int n, int version) {
+void search_testing(int n, int version, int x) {
     printf("Тест %d. Размер массива %d, версия поиска %d\n", test_num, n, version);
     int A[n];
     Fillinc(A, n);
     int C, i, n_x = 0;
-    int x = rand() % (n / 4) + 1;
     printf("Искомый элемент: %d\n", x);
     int first_i;
     
     switch(version) {
         case 1:
             i = bin_search_v1(A, n, x, &C);
+            printf("%d\n", C);
             if(i != -1) {
                 n_x++;
                 int tmp = 1;
@@ -60,6 +56,7 @@ void search_testing(int n, int version) {
         default:
             printf("Введена неверная версия поиска\n");
     }
+    
     if (i == -1) printf("Элемент '%d' не найден.\n", x);
     else {
         int xis[n_x];
@@ -68,6 +65,7 @@ void search_testing(int n, int version) {
         PrintMas(xis, n_x);
         printf("\n");
     }
+    PrintMas(A, n);
     printf("Поиск завершен. Колличество сравнений = %d\n\n", C);
     table_data[test_num - 1] = C;
     test_num++;
@@ -117,7 +115,8 @@ void draw_table(int *data, int n) {
     printf("-----------------------------------------\n");
     int i = 0;
     for (int s = 1; s <= 10; s++) {
-        printf("| %d\t| %d \t\t| %d\t\t|\n ",s * 100, data[i++], data[i++]);
+        printf("| %d\t| %d \t\t| %d\t\t|\n ",s * 100, data[i], data[i + 1]);
         printf("----------------------------------------\n");
+        i += 2;
     }
 }

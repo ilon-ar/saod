@@ -13,6 +13,7 @@ int test_num =  1;
 int table_data[20];
 
 int main() {
+    
     for (int i = 0; i < 20; i++) {
     }
     for (int n = 100; n < 1001; n += 100) {
@@ -39,7 +40,8 @@ int main() {
             }
         }
     }
-    draw_table(table_data, 20);    
+    draw_table(table_data, 20);   
+
     return 0;   
 }
 
@@ -60,6 +62,8 @@ void search_testing(int n, int version, int x) {
         default:
             printf("Введена неверная версия поиска\n");
     }
+    PrintMas(A, n);
+    printf("\n");
     if (i == -1) printf("Элемент '%d' не найден.\n", x);
     else {
         printf("Элемент '%d' найден. Его индекс - [%d]\n", x, i);
@@ -78,6 +82,8 @@ int bin_search_v1(int *A, int n, int x, int *C) {
         if (++(*C) && A[m] == x) return m;
         if (++(*C) && A[m] < x) L = m + 1;
         else R = m - 1;
+        printf("%d %d\n", *C, A[m]);
+
     }
     return -1;
 }
@@ -88,8 +94,10 @@ int bin_search_v2(int *A, int n, int x, int *C) {
     int m;
     while (L < R) {
         m = (L + R) / 2;
-        if (++(*C) && A[m] < x) L = m + 1;
+        ++(*C);
+        if (A[m] < x) L = m + 1;
         else R = m;
+        printf("%d %d\n", *C, A[m]);
     }
     if (++(*C) && A[L] == x) return L;
     else return -1;
@@ -110,11 +118,12 @@ void Fillinc(int *A, int n) {
 
 void draw_table(int *data, int n) {
     printf("-----------------------------------------\n");
-    printf("| N\t|Cф (II версия)\t|Cф (I версия)\t|\n");
+    printf("| N\t|Cф (I версия)\t|Cф (II версия)\t|\n");
     printf("-----------------------------------------\n");
     int i = 0;
     for (int s = 1; s <= 10; s++) {
-        printf("| %d\t| %d \t\t| %d\t\t|\n ",s * 100, data[i++], data[i++]);
+        printf("| %d\t| %d \t\t| %d\t\t|\n ",s * 100, data[i], data[i + 1]);
         printf("----------------------------------------\n");
+        i += 2;
     }
 }
