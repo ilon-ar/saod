@@ -12,6 +12,12 @@ typedef struct
     char adress[100];
 } Phone_t;
 
+void PrintMas(int *A, int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", A[i]);
+    }
+}
+
 char PhoneIsLess(Phone_t phone1, Phone_t phone2) {
     if (strcmp(phone1.name, phone2.name) < 0) {
         return 1;
@@ -55,11 +61,10 @@ void SortPhonesByNumber(Phone_t *phones, int n, int *index) { // select
 
 
 void PrintPhone(Phone_t phone){
-    printf("\n-------------------\n");
-    printf("number: %ld \n", phone.number);
-    printf("abonent: %s %s \n", phone.name, phone.surname);
-    printf("adress: %s\n", phone.adress);
-    printf("-------------------\n");
+    printf("\n————————————————————————————————————————————————\n");
+    printf("number\t\tabonent\t\tadress\n");
+    printf("%ld\t\t%s %s\t%s\n", phone.number, phone.name, phone.surname, phone.adress);
+    printf("————————————————————————————————————————————————\n");
 }
 void PhoneContructor(Phone_t *phone, long number, char *name, char *surname, char *adress) {
     phone->number = number;
@@ -76,7 +81,7 @@ int BinarySearchByName(Phone_t *phones, int n, char *name, int *index) {
         if (strcmp(phones[index[m]].name, name) < 0) L = m + 1;
         else R = m;
     }
-    if (strcmp(phones[index[L]].name, name) == 0) return L;
+    if (strcmp(phones[index[L]].name, name) == 0) return index[L];
     else return -1;
 }
 
@@ -88,7 +93,7 @@ int BinarySearchByNumber(Phone_t *phones, int n, long number, int *index) {
         if (phones[index[m]].number < number) L = m + 1;
         else R = m;
     }
-    if (phones[index[L]].number == number) return L;
+    if (phones[index[L]].number == number) return index[L];
     else return -1;
 }
 
@@ -112,11 +117,16 @@ int main() {
         PrintPhone(phones[index1[i]]);
     }
     SortPhonesByNumber(phones, 4, index2);
-    printf("Массив структур после сортировки (сортировка по номеру телефона): ");
+    printf("\nМассив структур после сортировки (сортировка по номеру телефона): ");
     for (int i = 0; i < 4; i++)  {
         PrintPhone(phones[index2[i]]);
     }
-    printf("\nДвоичный поиск по имени:\n");
+    printf("Индексные массивы: \n");
+    printf("Для сортировки по имени / фамилии: ");
+    PrintMas(index1, 4);
+    printf("\nДля сортировки по номеру телефона: ");
+    PrintMas(index2, 4);
+    printf("\n\nДвоичный поиск по имени:\n");
     char searching_name[100] = "Alex";
     int i = BinarySearchByName(phones, 4, searching_name, index1);
     if (i != -1) {
@@ -124,7 +134,6 @@ int main() {
     } else {
         printf("Абонент с именем '%s' не найден.\n", searching_name);
     }
-
     printf("\nДвоичный поиск по номеру телефона:\n");
     long searching_num = 223455;
     i = BinarySearchByNumber(phones, 4, searching_num, index2);

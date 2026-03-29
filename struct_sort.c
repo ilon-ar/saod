@@ -39,11 +39,10 @@ void SortPhones(Phone_t *phones, int n) { // select
 
 
 void PrintPhone(Phone_t phone){
-    printf("\n-------------------\n");
-    printf("number: %ld \n", phone.number);
-    printf("abonent: %s %s \n", phone.name, phone.surname);
-    printf("adress: %s\n", phone.adress);
-    printf("-------------------\n");
+    printf("\n————————————————————————————————————————————————\n");
+    printf("number\t\tabonent\t\tadress\n");
+    printf("%ld\t\t%s %s\t%s\n", phone.number, phone.name, phone.surname, phone.adress);
+    printf("————————————————————————————————————————————————\n");
 }
 void PhoneContructor(Phone_t *phone, long number, char *name, char *surname, char *adress) {
     phone->number = number;
@@ -68,7 +67,7 @@ int main() {
     Phone_t John, Alex, Bob, Dan;
     PhoneContructor(&John, 223455, "John", "Penguin", "Pushkina 40");
     PhoneContructor(&Alex, 123456, "Alex", "Lion", "Pokrishkina 21");
-    PhoneContructor(&Bob, 654321, "Bob", "Cast", "Asfaltnaya 42");
+    PhoneContructor(&Bob, 654321, "Alex", "Cast", "Asfaltnaya 42");
     PhoneContructor(&Dan, 890123, "Dan", "Frag", "Lenina 67");
     Phone_t phones[4] = {John, Alex, Bob, Dan};
     printf("Массив структур до сортировки: ");
@@ -89,4 +88,3 @@ int main() {
     }
     return 0;
 }
-

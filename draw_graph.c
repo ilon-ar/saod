@@ -61,7 +61,7 @@ int main() {
     setlinestyle(0, 1);
     setcolor(WHITE);
     printf("%d\n", k);
-    setlinestyle(0, 3);
+    setlinestyle(0, 2);
     setcolor(CYAN);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
     moveto(110, 910);
