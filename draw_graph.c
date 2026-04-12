@@ -15,6 +15,8 @@ int AddToHeap(int *A, int n, int L, int R, int *C, int *M);
 int HeapSort(int *A, int n);
 int shell_sort(int *A, int n, int *h, int m);
 void steps_knut(int *steps, int m);
+void QuickSort(int *A, int n, int L, int R, int *C, int *M);
+
 
 
 
@@ -39,6 +41,7 @@ int main() {
     int k = 1000;
     int graph_data_shell[k];
     int graph_data_heap[k];
+    int graph_data_quick[k];
     
     for (int i = 0; i < k + 1; i++) {
         int ar[i];
@@ -49,8 +52,12 @@ int main() {
         graph_data_shell[i] = shell_sort(ar, i, h, m);
         FillRand(ar, i);
         graph_data_heap[i] = HeapSort(ar, i);
-        
+        FillRand(ar, i);
+        int C = 0, M = 0;
+        QuickSort(ar, i, 0, i - 1, &C, &M);
+        graph_data_quick[i] = C + M;
     }
+    graph_data_heap[0] = 0;
     // PrintMas(graph_data_1, k);
     // PrintMas(graph_data_2, k);
     
@@ -58,7 +65,7 @@ int main() {
     float  y, ymin, ymax;
     int xmin = 0, xmax = k , x;
     
-    ymax = graph_data_shell[k - 1] * 1.5;
+    ymax = graph_data_shell[k - 1];
     ymin = 0;
     x = xmin, y = graph_data_shell[0]; 
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
@@ -73,6 +80,9 @@ int main() {
     setcolor(GREEN);
     moveto(350, 910);
     outtext("Heap Sort");
+    setcolor(RED);
+    moveto(490, 910);
+    outtext("Quick Sort");
     
     setcolor(CYAN);
     moveto(X(0), Y(0));
@@ -87,15 +97,22 @@ int main() {
     moveto(X(x), Y(y));
 
     setcolor(GREEN);
-    
     for (x = xmin; x < xmax; x++) {
         y = graph_data_heap[x];
+        lineto(X(x), Y(y));
+        // delay(200);
+    }
+
+    x = xmin; y = graph_data_quick[0];
+    moveto(X(x), Y(y));
+    setcolor(RED);
+    for (x = xmin; x < xmax; x++) {
+        y = graph_data_quick[x];
 
         lineto(X(x), Y(y));
         // delay(200);
     }
 
-    
     while(true){};
     closegraph();
 }
@@ -170,6 +187,24 @@ int HeapSort(int *A, int n) {
         AddToHeap(A, n, 1, R, &C, &M);
     }
     return M + C;
+}
+
+void QuickSort(int *A, int n, int L, int R, int *C, int *M) {
+    (*M)++;
+    int x = A[L], i = L, j = R, tmp;
+    while (i <= j) {
+        while (++(*C) && A[i] < x) i++;
+        while (++(*C) && A[j] > x) j--;
+        if (i <= j) {
+            *M += 3;
+            tmp = A[i];
+            A[i] = A[j];
+            A[j] = tmp;
+            i++; j--;
+        }
+    }
+    if (L < j) QuickSort(A, n, L, j, C, M);
+    if (i < R) QuickSort(A, n, i, R, C, M);
 }
 
 void Fillinc(int *A, int n) {
