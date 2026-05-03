@@ -8,7 +8,7 @@
 
 typedef struct spis {
     struct spis *next;
-    int data;
+    union {int data; unsigned char digit[4];};
 } spis;
 
 typedef struct queue {
@@ -16,21 +16,22 @@ typedef struct queue {
     struct spis *tail;
 } queue;
 
+char KDI4[] = {3, 2, 1, 0};
 
 void PrintMas(int *A, int n);
 void Fillinc(int *A, int n);
 void FillRand(int *A, int n);
 int AddToHeap(int *A, int n, int L, int R, int *C, int *M);
 int HeapSort(int *A, int n);
-int shell_sort(int *A, int n, int *h, int m);
-void steps_knut(int *steps, int m);
 void QuickSort(int *A, int n, int L, int R, int *C, int *M);
 void MergeSort(spis **S, int n, int *C, int *M);
+int DigitalSort4b(spis **S);
 spis* FillRandS(int n);
 void SplitList(spis *S, spis **a, spis **b, int n, int *M);
 void FromStackToQueue(spis **l_head, queue *q);
 void MergeLists(spis **a, int *q, spis **b, int *r, queue *c, int *C, int *M);
 void AddToStack(spis **head, int data);
+
 
 
 
@@ -53,18 +54,14 @@ int main() {
     initgraph(1000, 1000, "graph");
     drawos();
     int k = 1000;
-    int graph_data_shell[k];
     int graph_data_heap[k];
     int graph_data_quick[k];
     int graph_data_merge[k];
+    int graph_data_digital[k];
     
     for (int i = 0; i < k + 1; i++) {
         int ar[i];
-        int m = (int)log2(i + 1);
-        int h[m];
-        steps_knut(h, m);
-        FillRand(ar, i);
-        graph_data_shell[i] = shell_sort(ar, i, h, m);
+        
         FillRand(ar, i);
         graph_data_heap[i] = HeapSort(ar, i);
         FillRand(ar, i);
@@ -75,11 +72,11 @@ int main() {
         C = 0; M = 0;
         MergeSort(&S, i, &C, &M);
         graph_data_merge[i] = C + M;
+        graph_data_digital[i] = DigitalSort4b(&S);
     }
     graph_data_heap[0] = 0;
     graph_data_merge[0] = 0;
     graph_data_quick[0] = 0;
-    graph_data_shell[0] = 0;
     // PrintMas(graph_data_1, k);
     // PrintMas(graph_data_2, k);
     
@@ -87,9 +84,9 @@ int main() {
     float  y, ymin, ymax;
     int xmin = 0, xmax = k , x;
     
-    ymax = graph_data_shell[k - 1];
+    ymax = graph_data_heap[k - 1];
     ymin = 0;
-    x = xmin, y = graph_data_shell[0]; 
+    x = xmin, y = graph_data_heap[0]; 
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
     setlinestyle(0, 2);
     setcolor(WHITE);
@@ -98,7 +95,7 @@ int main() {
     setcolor(CYAN);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
     moveto(110, 910);
-    outtext("Shell Sort");
+    outtext("Digital Sort");
     setcolor(GREEN);
     moveto(350, 910);
     outtext("Heap Sort");
@@ -110,15 +107,6 @@ int main() {
     outtext("Merge Sort");
 
     
-    setcolor(CYAN);
-    moveto(X(0), Y(0));
-    graph_data_shell[0] = 0;
-    for (x = xmin; x < xmax; x++) {
-        y = graph_data_shell[x];
-        lineto(X(x), Y(y));
-        // delay(10);
-    }
-
     x = xmin; y = graph_data_heap[0];
     moveto(X(x), Y(y));
 
@@ -144,6 +132,16 @@ int main() {
     setcolor(YELLOW);
     for (x = xmin; x < xmax; x++) {
         y = graph_data_merge[x];
+
+        lineto(X(x), Y(y));
+        // delay(200);
+    }
+
+    x = xmin; y = graph_data_digital[0];
+    moveto(X(x), Y(y));
+    setcolor(CYAN);
+    for (x = xmin; x < xmax; x++) {
+        y = graph_data_digital[x];
 
         lineto(X(x), Y(y));
         // delay(200);
@@ -176,29 +174,7 @@ void PrintMas(int *A, int n) {
     }
     printf("\n");
 }
-void steps_knut(int* steps, int m) {
- steps[0] = 1;
- for (int i = 1; i < m; i++) {
-  steps[i] = 2 * steps[i - 1] + 1;
-  }
- }
 
-int shell_sort(int *A, int n, int* h, int m) {
-    int k, tmp, M = 0, C = 0;
-    int j;
-    for (m--; m >= 0; m--) { 
-        k = h[m];
-        for (int i = k; i < n; i++) {
-            tmp = A[i]; M++;
-            for (j = i - k; ++C &&  j >= 0 && tmp < A[j]; j -= k) {
-                // ++C;
-                A[j + k] = A[j]; M++;   
-            }
-            A[j + k] = tmp; M++;
-        }
-    }
-    return M + C;
-}
 void SplitList(spis *S, spis **a, spis **b, int n, int *M) {
     spis *k, *p;
     *a = S; *b = S->next; n = 1;
@@ -272,6 +248,39 @@ void MergeSort(spis **S, int n, int *C, int *M) {
     }
     c[0].tail->next = NULL;
     *S = c[0].head;
+    (*M) *= 1.5;
+}
+
+int DigitalSort4b(spis **S) {
+    int M = 0;
+    for (int j = 3; j >= 0; j--) {
+        queue Q[256];
+        for (int i = 0; i < 256; i++) {
+            Q[i].tail = (spis *)&(Q[i].head);
+            Q[i].head = NULL;
+        } 
+        spis *p = *S;
+        char k = KDI4[j];
+        while (p != NULL) {
+            unsigned char d = p->digit[k];
+            Q[d].tail->next = p;
+            Q[d].tail = p;
+            p = p->next;
+            M++;
+        }
+
+        spis tmp;
+        p = &tmp;
+        for (int i = 0; i < 256; i++) {
+            if (Q[i].tail != (spis *)&(Q[i].head)) {
+                p->next = Q[i].head;
+                p = Q[i].tail;
+            }
+        }
+        p->next = NULL;
+        *S = tmp.next;
+    }
+    return M;
 }
 
 int AddToHeap(int *A, int n, int L, int R, int *C, int *M) {
